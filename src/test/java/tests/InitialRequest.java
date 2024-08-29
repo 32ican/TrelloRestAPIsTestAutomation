@@ -5,13 +5,9 @@ import static io.restassured.RestAssured.given;
 import org.testng.annotations.Test;
 
 import io.restassured.RestAssured;
-import utils.CredentialManager;
+import utils.BaseTest;
 
-import static utils.CredentialManager.*;
-
-
-
-public class InitialRequest{
+public class InitialRequest extends BaseTest{
 	
 
 	@Test
@@ -19,15 +15,13 @@ public class InitialRequest{
 		
 		
 		RestAssured.baseURI = "https://api.trello.com/1/";
-		RestAssured.basePath = "members/me";
 		
 		String response = given()
-		.header("content-type", "application/json")
-		.queryParam("key", getAPIKey())
-		.queryParam("token", getToken())
+		.spec(requestSpec)
 		.queryParam("bords", "open")
-		.when().get()
-		.then().assertThat().statusCode(200)
+		.when().get("members/me")
+		.then().assertThat()
+		.spec(responseSpec)
 		.extract().body().asString();
 		
 		System.out.println("Response " + response);

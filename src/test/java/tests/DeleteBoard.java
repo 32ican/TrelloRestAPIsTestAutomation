@@ -1,33 +1,42 @@
 package tests;
 
 import static io.restassured.RestAssured.given;
-import static utils.CredentialManager.getAPIKey;
-import static utils.CredentialManager.getToken;
 
 import org.testng.annotations.Test;
-
-import io.restassured.RestAssured;
+import org.testng.asserts.SoftAssert;
+import pojos.DeleteMessage;
+import utils.BaseTest;
 import utils.ConfigManager;
 
-public class DeleteBoard {
+public class DeleteBoard extends BaseTest{
 
+	private String lastBoardId = ConfigManager.getProperty("lastBoardId");
+	private String expectedMessage = "board is removed successfully";
 	
 	@Test
 	public void deleteBorad() {
 		
-		RestAssured.baseURI = "https://api.trello.com/1";
-		RestAssured.basePath = "/boards/";
+		//RestAssured.basePath = "/boards/";
+		
+		DeleteMessage message =
 		
 		given()
-		.pathParam("id", ConfigManager.getProperty("boardId"))
-				.header("content-type", "application/json")
-        .queryParam("key", getAPIKey())
-        .queryParam("token", getToken())
-        
-        
+		.spec(requestSpec)
+		.pathParam("id", lastBoardId)
+
         .when()
-        .delete("{id}")
-        .then().log().all().statusCode(200);
+        .delete("/boards/{id}")
+        .then()
+        .log().all()
+        .spec(responseSpec)
+        .extract().as(DeleteMessage.class);
+	
+		// Verify that the response body contains a meaningful message
+		SoftAssert softAssert = new SoftAssert();
+		String actualMessage = message.getValue().toString();
+		softAssert.assertEquals(actualMessage, expectedMessage, 
+				"Response Body should contain the following message: board is removed successfully");
+		
 		
 	}
 }

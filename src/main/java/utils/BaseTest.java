@@ -1,10 +1,7 @@
 package utils;
 
-import static io.restassured.RestAssured.given;
 import static utils.CredentialManager.getAPIKey;
 import static utils.CredentialManager.getToken;
-
-import org.testng.annotations.AfterTest;
 
 import org.testng.annotations.BeforeTest;
 
@@ -18,6 +15,7 @@ public class BaseTest {
 
 	protected static RequestSpecification requestSpec;
 	protected static ResponseSpecification responseSpec;
+
 	
 	@BeforeTest
 	public void setUp() {
@@ -26,10 +24,11 @@ public class BaseTest {
 		 requestSpec = new RequestSpecBuilder()
 				.addQueryParam("key", getAPIKey())
 				.addQueryParam("token", getToken())
-				.addHeader("content-type", "application/json").build();
+				.addHeader("content-type", "application/json")
+				.build();
 		 
 		 responseSpec = new ResponseSpecBuilder()
-					.expectStatusCode(200).build();
+				 .expectStatusCode(200).build();
 	}
 
 	
